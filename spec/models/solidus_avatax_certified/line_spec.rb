@@ -105,4 +105,35 @@ describe SolidusAvataxCertified::Line, :vcr do
       end
     end
   end
+
+  context 'with a non-persisted order' do
+    let(:stock_location) { create(:stock_location) }
+    let(:store) { create(:store) }
+    let(:address) { build(:address) }
+    let(:product) { Spree::Product.create(name: 'default') }
+    let(:tax_category) { create(:tax_category) }
+    let(:shipping_method) { create(:shipping_method) }
+    let(:tax_rate) { create(:tax_rate) }
+    let(:shipping_rate) { Spree::ShippingRate.new(selected: true, shipping_method: shipping_method, tax_rate_id: tax_rate.id) }
+    let(:stock_location) { create(:stock_location) }
+    let(:shipment) { Spree::Shipment.new(shipping_rates: [shipping_rate], stock_location: stock_location) }
+    let(:variant) { Spree::Variant.new(product: product, tax_category: tax_category) }
+
+    let(:line_item) { Spree::LineItem.new(variant: variant, price: 1, quantity: 1) }
+    let(:line_items) { [ line_item ] }
+    let(:order) { Spree::Order.new(line_items: line_items, store: store, ship_address: address, shipments: [shipment]) }
+    let(:sales_lines) { SolidusAvataxCertified::Line.new(order, 'SalesOrder') }
+
+    it 'uses the line_item object_id in the line_item number' do
+      expect(sales_lines.item_line(order.line_items.first)).to be_kind_of(Hash)
+      expect(sales_lines.item_line(order.line_items.first)[:number]).to be_present
+      expect(sales_lines.item_line(order.line_items.first)[:number]).to include line_item.object_id.to_s
+    end
+
+    it 'uses the shipment object_id in the shipment number' do
+      expect(sales_lines.shipment_line(order.shipments.first)).to be_kind_of(Hash)
+      expect(sales_lines.shipment_line(order.shipments.first)[:number]).to be_present
+      expect(sales_lines.shipment_line(order.shipments.first)[:number]).to include shipment.object_id.to_s
+    end
+  end
 end
