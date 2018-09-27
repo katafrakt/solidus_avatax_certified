@@ -127,7 +127,7 @@ describe SolidusAvataxCertified::Line, :vcr do
     it 'uses the line_item object_id in the line_item number' do
       expect(sales_lines.item_line(order.line_items.first)).to be_kind_of(Hash)
       expect(sales_lines.item_line(order.line_items.first)[:number]).to be_present
-      expect(sales_lines.item_line(order.line_items.first)[:number]).to include line_item.object_id.to_s
+      expect(sales_lines.item_line(order.line_items.first)[:number]).to include variant.sku
     end
 
     it 'uses the shipment object_id in the shipment number' do
