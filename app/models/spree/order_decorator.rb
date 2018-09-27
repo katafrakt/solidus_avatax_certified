@@ -23,9 +23,11 @@ Spree::Order.class_eval do
   def avalara_capture
     logger.info "Start avalara_capture for order #{number}"
 
-    create_avalara_transaction if avalara_transaction.nil?
     if persisted?
+      create_avalara_transaction if avalara_transaction.nil?
       line_items.reload
+    elsif avalara_transaction.nil?
+      build_avalara_transaction
     end
 
     avalara_transaction.commit_avatax('SalesOrder')
@@ -34,10 +36,11 @@ Spree::Order.class_eval do
   def avalara_capture_finalize
     logger.info "Start avalara_capture_finalize for order #{number}"
 
-    create_avalara_transaction if avalara_transaction.nil?
-
     if persisted?
+      create_avalara_transaction if avalara_transaction.nil?
       line_items.reload
+    elsif avalara_transaction.nil?
+      build_avalara_transaction
     end
 
     avalara_transaction.commit_avatax_final('SalesInvoice')
