@@ -22,4 +22,8 @@ Spree::LineItem.class_eval do
   def avatax_line_code
     'LI'
   end
+
+  def avatax_digest
+    id || variant.sku
+  end
 end

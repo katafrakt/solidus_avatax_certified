@@ -13,6 +13,10 @@ Spree::Shipment.class_eval do
     'FR'
   end
 
+  def avatax_digest
+    id || object_id
+  end
+
   def shipping_method_tax_code
     tax_code = shipping_method.tax_category.try(:tax_code)
     if tax_code.nil?
