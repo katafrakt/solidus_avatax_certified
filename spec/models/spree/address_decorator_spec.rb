@@ -41,4 +41,26 @@ describe Spree::Address, type: :model do
       expect(Spree::Address.validation_enabled_countries).to include('United States')
     end
   end
+
+  describe '#avatax_cache_key' do
+    subject { address.avatax_cache_key }
+
+    context 'with a persisted record' do
+      let(:address) { create(:address, zipcode: 10005) }
+
+      it 'builds a cache key' do
+        expect(subject).
+          to eq("Spree::Address-#{address.id}-10005-Herndon-AL-US")
+      end
+    end
+
+    context 'with a non-persisted record' do
+      let(:address) { build(:address, zipcode: 10005) }
+
+      it 'builds a cache key' do
+        expect(subject).
+          to eq("Spree::Address--10005-Herndon-AL-US")
+      end
+    end
+  end
 end
