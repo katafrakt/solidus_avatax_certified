@@ -16,12 +16,26 @@ describe Spree::LineItem, type: :model do
   end
 
   describe '#avatax_cache_key' do
-    it 'should respond with a cache key' do
-      line_item = Spree::LineItem.new(price: 10, id: 1, quantity: 1)
+    context 'with a persisted record' do
+      let(:line_item) do
+        create(:line_item, price: 10, quantity: 1)
+      end
 
-      expected_response = 'Spree::LineItem-1-1-10.0-0.0'
+      it 'should respond with a cache key' do
+        expect(line_item.avatax_cache_key).
+          to eq("Spree::LineItem-#{line_item.id}-1-10.0-0.0")
+      end
+    end
 
-      expect(line_item.avatax_cache_key).to eq(expected_response)
+    context 'with a non-persisted record' do
+      let(:line_item) do
+        build(:line_item, price: 10, quantity: 1)
+      end
+
+      it 'should respond with a cache key' do
+        expect(line_item.avatax_cache_key).
+          to eq("Spree::LineItem-#{line_item.variant.sku}-1-10.0-0.0")
+      end
     end
   end
 

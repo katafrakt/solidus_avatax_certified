@@ -12,4 +12,14 @@ Spree::Address.class_eval do
   def self.validation_enabled_countries
     Spree::Avatax::Config.address_validation_enabled_countries
   end
+
+  def avatax_cache_key
+    key = ['Spree::Address']
+    key << self.id
+    key << self.zipcode
+    key << self.city
+    key << self.state&.abbr
+    key << self.country.iso
+    key.join('-')
+  end
 end
