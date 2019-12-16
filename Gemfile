@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
-branch = 'master'
-gem "solidus", github: "solidusio/solidus", branch: branch
+gem "solidus", github: "JuulLabs/solidus", branch: 'juul-master'
+gem 'solidus_frontend', '2.9.3'
 gem "solidus_auth_devise", github: "solidusio/solidus_auth_devise"
 gem 'avatax-ruby'
 

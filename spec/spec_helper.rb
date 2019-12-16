@@ -84,3 +84,5 @@ RSpec.configure do |config|
     Capybara.current_driver = ex.metadata[:driver] || :poltergeist
   end
 end
+
+ActiveSupport.run_load_hooks('Spree::User') # trigger autoloading of Spree::User and its decorator in tests

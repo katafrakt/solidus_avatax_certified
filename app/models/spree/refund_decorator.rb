@@ -1,24 +1,26 @@
-Spree::Refund.class_eval do
-  has_one :avalara_transaction
-  after_create :avalara_capture_finalize, if: :avalara_tax_enabled?
+ActiveSupport.on_load('Spree::Refund', run_once: true) do
+  Spree::Refund.class_eval do
+    has_one :avalara_transaction
+    after_create :avalara_capture_finalize, if: :avalara_tax_enabled?
 
-  delegate :avalara_tax_enabled?, to: :payment
+    delegate :avalara_tax_enabled?, to: :payment
 
-  def avalara_capture_finalize
-    logger.info "Start Spree::Refund#avalara_capture_finalize for order #{payment.order.number}"
+    def avalara_capture_finalize
+      logger.info "Start Spree::Refund#avalara_capture_finalize for order #{payment.order.number}"
 
-    begin
-      avalara_transaction_refund = payment.order.avalara_transaction
+      begin
+        avalara_transaction_refund = payment.order.avalara_transaction
 
-      @rtn_tax = avalara_transaction_refund.commit_avatax_final('ReturnInvoice', self)
+        @rtn_tax = avalara_transaction_refund.commit_avatax_final('ReturnInvoice', self)
 
-      @rtn_tax
-    rescue => e
-      logger.error(e, 'Refund Capture Finalize Error')
+        @rtn_tax
+      rescue => e
+        logger.error(e, 'Refund Capture Finalize Error')
+      end
     end
-  end
 
-  def logger
-    @logger ||= SolidusAvataxCertified::AvataxLog.new('Spree::Refund class', 'Start refund capture')
+    def logger
+      @logger ||= SolidusAvataxCertified::AvataxLog.new('Spree::Refund class', 'Start refund capture')
+    end
   end
 end

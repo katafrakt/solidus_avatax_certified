@@ -1,11 +1,13 @@
-Spree::Admin::UsersController.class_eval do
-  def avalara_information
-    if request.put?
-      if @user.update_attributes(user_params)
-        flash.now[:success] = Spree.t(:account_updated)
+ActiveSupport.on_load('Spree::Admin::UsersController', run_once: true) do
+  Spree::Admin::UsersController.class_eval do
+    def avalara_information
+      if request.put?
+        if @user.update_attributes(user_params)
+          flash.now[:success] = Spree.t(:account_updated)
+        end
       end
-    end
 
-    render :avalara_information
+      render :avalara_information
+    end
   end
 end

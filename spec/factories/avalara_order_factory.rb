@@ -3,19 +3,19 @@ FactoryBot.define do
     user
     bill_address
     ship_address
-    completed_at nil
+    completed_at { nil }
     email { user.email }
     store
-    state 'delivery'
+    state { 'delivery' }
 
     transient do
-      line_items_price BigDecimal.new(10)
-      line_items_count 1
-      line_items_quantity 1
-      shipment_cost 5
+      line_items_price { BigDecimal.new(10) }
+      line_items_count { 1 }
+      line_items_quantity { 1 }
+      shipment_cost { 5 }
       stock_location { build(:stock_location) }
-      tax_category Spree::TaxCategory.first
-      tax_included false
+      tax_category { Spree::TaxCategory.first }
+      tax_included { false }
     end
 
     before(:create) do |order, evaluator|
@@ -44,8 +44,8 @@ FactoryBot.define do
     end
 
     factory :completed_avalara_order do
-      shipment_state 'shipped'
-      payment_state 'paid'
+      shipment_state { 'shipped' }
+      payment_state { 'paid' }
 
       after(:create) do |order|
         # order.refresh_shipment_rates
